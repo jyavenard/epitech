@@ -11,6 +11,7 @@
 #endif /*READ_SIZE*/
  
 #define BUFFER_SIZE 512
+
 void copy_buffer(char *new_buffer, char *buffer, int length)
 {
     int index = 0;
@@ -26,11 +27,11 @@ int my_read(int fd, char *dest){
     static int length = 0;
 
     if (index == length){
+        index = 0;
         length = read(fd, buffer, READ_SIZE);
         if (length <= 0){
             return (length);
         }
-        index = 0;
     }
     *dest = buffer[index++];
     return 1;
