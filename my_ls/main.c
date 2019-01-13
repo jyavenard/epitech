@@ -158,7 +158,7 @@ int get_contents(char *root_path, DIR *d, int flags) {
     char path[PATH_MAX] = {0};
     struct dirent *entry;
     struct stat s;
-    int i = 0;
+    int number_of_entries = 0;
     while ((entry = readdir(d)) != NULL) {
         path[0] = 0;
         strcat(path, root_path);
@@ -181,15 +181,15 @@ int get_contents(char *root_path, DIR *d, int flags) {
         } else {
             display_contents(entry->d_name, &s, flags);
         }
-        i++;
+        number_of_entries++;
     }
-    return i;
+    return number_of_entries;
 }
 
 int main(int argc, char *argv[]) {
     int flags = 0;
     DIR *d;
-    int i = 0;
+    int index = 0;
     struct stat s;
     char buf[PATH_MAX] = {0};
 
@@ -209,22 +209,23 @@ int main(int argc, char *argv[]) {
     lstat(argv[0], &s);
     int arg_is_dir = S_ISDIR(s.st_mode); /* set to 1 if the argument provided is a directory, in which case we'll display its content */
 
-    for (; argc > 0; argc--) {
-        lstat(argv[i], &s);
+    while (index < argc) {
+        lstat(argv[index], &s);
         if (arg_is_dir || ((flags & kRecursive) && S_ISDIR(s.st_mode))) {
-            DIR *subdir = opendir(argv[i]);
+            DIR *subdir = opendir(argv[index]);
             if (subdir == NULL) {
                 printf("can't read\n");
             } else {
-                if (get_contents(argv[i], subdir, flags) < 0) {
+                if (get_contents(argv[index], subdir, flags) < 0) {
                     return (-1);
                 }
             }
             arg_is_dir = 0;
         } else {
-            display_contents(argv[i], &s, flags);
+            display_contents(argv[index], &s, flags);
         }
-        i++;
+        index++;
     }
+    int number_of_entries = index;
     return (0);
 }
