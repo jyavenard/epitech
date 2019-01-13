@@ -87,7 +87,7 @@ int my_getopt(int argc, char *const *argv, const char *options) {
 }
 
 int set_flags(int argc, char *const *argv) {
-    unsigned flags = 0;
+    int flags = 0;
     int ch;
     while ((ch = my_getopt(argc, argv, "lRdrt")) != -1) {
         switch (ch) {
@@ -108,14 +108,14 @@ int set_flags(int argc, char *const *argv) {
                 flags |= kSortedByTime;
                 break;
             default:
-                printf("invalid option\n");
+                printf("ls: illegal option -- %c\n", ch);
                 return (-1);
         }
     }
     return flags;
 }
 
-void display_contents(char *name, struct stat *sb, unsigned flags) {
+void display_contents(char *name, struct stat *sb, int flags) {
     struct tm *t;
     char link_read[PATH_MAX] = {0};
     ssize_t bytes_read;
@@ -154,7 +154,7 @@ void display_contents(char *name, struct stat *sb, unsigned flags) {
     }
 }
 
-int get_contents(char *root_path, DIR *d, unsigned flags) {
+int get_contents(char *root_path, DIR *d, int flags) {
     char path[PATH_MAX] = {0};
     struct dirent *entry;
     struct stat s;
@@ -187,7 +187,7 @@ int get_contents(char *root_path, DIR *d, unsigned flags) {
 }
 
 int main(int argc, char *argv[]) {
-    unsigned flags = 0;
+    int flags = 0;
     DIR *d;
     int i = 0;
     struct stat s;
